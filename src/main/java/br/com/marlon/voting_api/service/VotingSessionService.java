@@ -69,7 +69,7 @@ public class VotingSessionService {
 
         long yesVotes = voteRepository.countByVotingSessionIdAndChoice(
                 votingSessionId,
-                VoteChoice.NO
+                VoteChoice.YES
         );
 
         long noVotes = voteRepository.countByVotingSessionIdAndChoice(
