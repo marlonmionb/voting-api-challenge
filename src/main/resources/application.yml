@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: voting-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/voting_api
+    username: voting_user
+    password: voting_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+external:
+  cpf-eligibility:
+    base-url: https://user-info.herokuapp.com
