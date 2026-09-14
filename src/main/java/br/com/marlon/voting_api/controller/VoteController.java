@@ -4,6 +4,10 @@ import br.com.marlon.voting_api.dto.request.CastVoteRequest;
 import br.com.marlon.voting_api.dto.response.CastVoteResponse;
 import br.com.marlon.voting_api.entity.Vote;
 import br.com.marlon.voting_api.service.VoteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Votes", description = "Vote registration endpoints.")
 public class VoteController {
 
     private final VoteService voteService;
@@ -23,6 +28,13 @@ public class VoteController {
     }
 
     @PostMapping("/votes")
+    @Operation(summary = "Cast a vote in an open voting session")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Vote recorded"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Voting session not found"),
+            @ApiResponse(responseCode = "409", description = "Voting session is closed or associate already voted")
+    })
     public ResponseEntity<CastVoteResponse> cast(
             @Valid @RequestBody CastVoteRequest request
     ) {

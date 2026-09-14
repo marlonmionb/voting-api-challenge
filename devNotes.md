@@ -84,6 +84,10 @@ Eventos de criação de pauta, abertura de sessão, registro de voto e rejeiçõ
 
 As rotas usam o prefixo `/api/v1`, permitindo a coexistência de versões do contrato da API.
 
+## Documentação OpenAPI
+
+A especificação OpenAPI é gerada com Springdoc e disponibilizada pelo Swagger UI. Endpoints são organizados por tags e documentam operações e respostas HTTP esperadas.
+
 ## Controle de versão
 
 Os commits seguem mensagens curtas e descritivas, com prefixos como `feat`, `fix`, `test`, `docs` e `chore`. Cada commit agrupa uma alteração coesa e validada seguindo o padrão Conventional Commits.

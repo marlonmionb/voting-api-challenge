@@ -7,6 +7,10 @@ import br.com.marlon.voting_api.dto.screen.FormItemResponse;
 import br.com.marlon.voting_api.dto.screen.FormScreenResponse;
 import br.com.marlon.voting_api.entity.AgendaItem;
 import br.com.marlon.voting_api.service.AgendaItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Agenda items", description = "Agenda item creation and mobile form endpoints.")
 public class AgendaItemController {
     private final AgendaItemService agendaItemService;
 
@@ -25,6 +30,8 @@ public class AgendaItemController {
     }
 
     @GetMapping("/screens/agenda-items/new")
+    @Operation(summary = "Get the agenda item creation screen")
+    @ApiResponse(responseCode = "200", description = "Mobile form definition returned")
     public FormScreenResponse getCreateForm() {
         return new FormScreenResponse(
                 "FORMULÁRIO",
@@ -58,6 +65,11 @@ public class AgendaItemController {
 
 
     @PostMapping("/agenda-items")
+    @Operation(summary = "Create an agenda item")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Agenda item created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
     public ResponseEntity<AgendaItemResponse> createAgendaItem(
             @Valid @RequestBody CreateAgendaItemRequest request
     ) {
