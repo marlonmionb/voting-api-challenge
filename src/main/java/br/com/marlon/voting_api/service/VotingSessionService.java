@@ -9,8 +9,9 @@ import br.com.marlon.voting_api.repository.AgendaItemRepository;
 import br.com.marlon.voting_api.repository.VoteRepository;
 import br.com.marlon.voting_api.repository.VotingSessionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 
@@ -56,6 +57,7 @@ public class VotingSessionService {
         return votingSessionRepository.save(votingSession);
     }
 
+    @Transactional(readOnly = true)
     public VotingResultResponse getResult(Long votingSessionId) {
         VotingSession votingSession = votingSessionRepository
                 .findById(votingSessionId)

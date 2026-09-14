@@ -62,7 +62,7 @@ Os DTOs em `dto.screen` representam formulário e seleção. As propriedades JSO
 
 ## Carregamento lazy da pauta
 
-`VotingSession` carrega `AgendaItem` sob demanda para reduzir consultas desnecessárias. A apuração acessa os dados da pauta somente ao montar a resposta.
+`VotingSession` carrega `AgendaItem` sob demanda para reduzir consultas desnecessárias. A consulta de resultado executa em transação somente leitura para carregar os dados da pauta durante a montagem da resposta.
 
 ## Resultado apenas após encerrar a sessão
 
