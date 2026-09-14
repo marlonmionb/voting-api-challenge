@@ -3,17 +3,17 @@ package br.com.marlon.voting_api.service;
 import br.com.marlon.voting_api.dto.request.CreateAgendaItemRequest;
 import br.com.marlon.voting_api.entity.AgendaItem;
 import br.com.marlon.voting_api.repository.AgendaItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AgendaItemService {
 
-    // receber titulo e descricao
-    // criar AgendaItem
-    // salvar com agendaItemRepository
-    // devolver a pauta criada
+    private static final Logger log = LoggerFactory.getLogger(AgendaItemService.class);
 
-    private AgendaItemRepository agendaItemRepository;
+
+    private final AgendaItemRepository agendaItemRepository;
 
     public AgendaItemService(AgendaItemRepository agendaItemRepository) {
         this.agendaItemRepository = agendaItemRepository;
@@ -25,6 +25,13 @@ public class AgendaItemService {
         agendaItem.setTitle(request.title());
         agendaItem.setDescription(request.description());
 
-        return agendaItemRepository.save(agendaItem);
+        AgendaItem savedAgendaItem = agendaItemRepository.save(agendaItem);
+
+        log.info(
+                "Agenda item created. agendaItemId={}",
+                savedAgendaItem.getId()
+        );
+
+        return savedAgendaItem;
     }
 }

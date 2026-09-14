@@ -8,12 +8,17 @@ import br.com.marlon.voting_api.repository.VoteRepository;
 import br.com.marlon.voting_api.repository.VotingSessionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 
 @Service
 public class VoteService {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(VoteService.class);
 
     private final VoteRepository voteRepository;
     private final VotingSessionRepository votingSessionRepository;
@@ -42,6 +47,11 @@ public class VoteService {
                 && now.isBefore(votingSession.getClosesAt());
 
         if (!isSessionOpen) {
+            log.warn(
+                    "Vote rejected because voting session is not open. votingSessionId={}",
+                    votingSession.getId()
+            );
+
             throw new IllegalStateException("Voting session is not open");
         }
 
@@ -51,6 +61,11 @@ public class VoteService {
                 votingSession.getId(),
                 associateCpf
         )) {
+            log.warn(
+                    "Vote rejected because associate already voted. votingSessionId={}",
+                    votingSession.getId()
+            );
+
             throw new IllegalStateException(
                     "Associate has already voted in this voting session"
             );
@@ -70,6 +85,15 @@ public class VoteService {
         vote.setAssociateCpf(associateCpf);
         vote.setChoice(request.choice());
 
-        return voteRepository.save(vote);
+        Vote savedVote = voteRepository.save(vote);
+
+        log.info(
+                "Vote recorded. voteId={}, votingSessionId={}, choice={}",
+                savedVote.getId(),
+                votingSession.getId(),
+                savedVote.getChoice()
+        );
+
+        return savedVote;
     }
 }

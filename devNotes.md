@@ -76,6 +76,10 @@ O resultado é definido por maioria simples: mais votos `YES` resultam em `APPRO
 
 `ProblemDetail` padroniza respostas de erro. Requests inválidos retornam `400` com os campos que falharam na validação, recursos inexistentes retornam `404` e conflitos de regra de negócio ou integridade retornam `409`.
 
+## Logs de negócio
+
+Eventos de criação de pauta, abertura de sessão, registro de voto e rejeições são registrados com SLF4J. Os logs utilizam IDs internos e não registram CPF.
+
 ## Versionamento da API
 
 As rotas usam o prefixo `/api/v1`, permitindo a coexistência de versões do contrato da API.

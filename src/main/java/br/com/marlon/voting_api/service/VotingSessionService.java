@@ -10,6 +10,8 @@ import br.com.marlon.voting_api.repository.VoteRepository;
 import br.com.marlon.voting_api.repository.VotingSessionRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,9 @@ import java.time.OffsetDateTime;
 
 @Service
 public class VotingSessionService {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(VotingSessionService.class);
 
     private final VotingSessionRepository votingSessionRepository;
     private final AgendaItemRepository agendaItemRepository;
@@ -38,6 +43,11 @@ public class VotingSessionService {
                 .orElseThrow(() -> new EntityNotFoundException("Agenda item not found"));
 
         if (votingSessionRepository.existsByAgendaItemId(request.agendaItemId())) {
+            log.warn(
+                    "Voting session rejected because one already exists. agendaItemId={}",
+                    request.agendaItemId()
+            );
+
             throw new IllegalStateException(
                     "A voting session already exists for this agenda item"
             );
@@ -54,7 +64,17 @@ public class VotingSessionService {
         votingSession.setOpenedAt(openedAt);
         votingSession.setClosesAt(openedAt.plusMinutes(durationMinutes));
 
-        return votingSessionRepository.save(votingSession);
+        VotingSession savedVotingSession =
+                votingSessionRepository.save(votingSession);
+
+        log.info(
+                "Voting session opened. votingSessionId={}, agendaItemId={}, closesAt={}",
+                savedVotingSession.getId(),
+                agendaItem.getId(),
+                savedVotingSession.getClosesAt()
+        );
+
+        return savedVotingSession;
     }
 
     @Transactional(readOnly = true)
