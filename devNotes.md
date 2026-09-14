@@ -56,10 +56,6 @@ A anotação `@CPF` valida formato e dígitos verificadores antes de executar o 
 
 DTOs definem os contratos de entrada e saída da API. Respostas específicas evitam a serialização direta de relações JPA, como no registro de votos e na apuração.
 
-## Contrato de telas mobile
-
-Os DTOs em `dto.screen` representam formulário e seleção. As propriedades JSON permanecem em português porque são parte do contrato de telas do desafio.
-
 ## Carregamento lazy da pauta
 
 `VotingSession` carrega `AgendaItem` sob demanda para reduzir consultas desnecessárias. A consulta de resultado executa em transação somente leitura para carregar os dados da pauta durante a montagem da resposta.
