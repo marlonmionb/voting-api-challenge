@@ -90,4 +90,4 @@ Os commits seguem mensagens curtas e descritivas, com prefixos como `feat`, `fix
 
 ## Testes automatizados
 
-Regras de negócio dos services são cobertas com testes unitários usando Mockito. Contratos HTTP, validações e respostas de erro dos controllers são cobertos com MockMvc, sem dependência de banco de dados.
+Regras de negócio dos services são cobertas com testes unitários usando Mockito. Contratos HTTP, validações e respostas de erro dos controllers são cobertos com MockMvc, sem dependência de banco de dados. Testcontainers é utilizado para validar o fluxo principal contra PostgreSQL real, incluindo persistência e migrations.
