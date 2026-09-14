@@ -74,7 +74,7 @@ O resultado é definido por maioria simples: mais votos `YES` resultam em `APPRO
 
 ## Tratamento de erros
 
-`ProblemDetail` padroniza respostas de erro. Recursos inexistentes retornam `404` e violações de regras de negócio retornam `409`.
+`ProblemDetail` padroniza respostas de erro. Requests inválidos retornam `400` com os campos que falharam na validação, recursos inexistentes retornam `404` e conflitos de regra de negócio ou integridade retornam `409`.
 
 ## Versionamento da API
 
