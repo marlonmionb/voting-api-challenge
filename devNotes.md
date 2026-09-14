@@ -20,6 +20,10 @@ Os identificadores usam `Long` com geração pelo banco. IDs não são controles
 
 O esquema do banco é versionado com Flyway. Alterações de estrutura são introduzidas por novas migrations, preservando o histórico já aplicado.
 
+## PostgreSQL local com Docker Compose
+
+O ambiente local utiliza Docker Compose para iniciar o PostgreSQL com as credenciais da aplicação. O volume nomeado preserva os dados entre reinicializações do container.
+
 ## Datas de criação e votação
 
 `@PrePersist` preenche datas automaticamente na criação das entidades. `OffsetDateTime` registra data, hora e fuso horário.
