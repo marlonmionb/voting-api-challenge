@@ -1,6 +1,7 @@
 package br.com.marlon.voting_api.service;
 
 import br.com.marlon.voting_api.client.CpfEligibilityClient;
+import br.com.marlon.voting_api.client.VoteEligibility;
 import br.com.marlon.voting_api.dto.request.CastVoteRequest;
 import br.com.marlon.voting_api.entity.Vote;
 import br.com.marlon.voting_api.entity.VoteChoice;
@@ -130,6 +131,9 @@ class VoteServiceTest {
                 openSession.getId(),
                 "62094079007"
         )).thenReturn(false);
+
+        when(cpfEligibilityClient.checkEligibility("62094079007"))
+                .thenReturn(VoteEligibility.ABLE_TO_VOTE);
 
         when(voteRepository.save(any(Vote.class)))
                 .thenAnswer(invocation -> {

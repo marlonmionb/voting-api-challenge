@@ -6,7 +6,7 @@ O projeto adota as camadas `controller`, `service`, `repository`, `entity`, `dto
 
 ## Nomes em inglês
 
-Classes, atributos, métodos, tabelas e colunas usam inglês. As propriedades em português nos DTOs de tela pertencem exclusivamente ao contrato JSON do cliente mobile.
+Classes, atributos, métodos, tabelas e colunas usam inglês.
 
 ## Entidades e persistência
 
@@ -50,7 +50,7 @@ A anotação `@CPF` valida formato e dígitos verificadores antes de executar o 
 
 ## Serviço externo de elegibilidade
 
-`CpfEligibilityClient` encapsula a integração de elegibilidade e mantém detalhes HTTP fora de `VoteService`. A URL-base do serviço é configurada externamente em `application.yml`.
+`CpfEligibilityClient` encapsula a integração de elegibilidade e mantém detalhes HTTP fora de `VoteService`. O endpoint Mocky definido pelo desafio é configurado externamente em `application.yml`.
 
 ## DTOs para requests e responses
 

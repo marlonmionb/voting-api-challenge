@@ -21,7 +21,7 @@ public class CpfEligibilityClient {
     public VoteEligibility checkEligibility(String cpf) {
         try {
             CpfEligibilityResponse response = restClient.get()
-                    .uri("/users/{cpf}", cpf)
+                    .uri("users/{cpf}", cpf)
                     .retrieve()
                     .body(CpfEligibilityResponse.class);
 

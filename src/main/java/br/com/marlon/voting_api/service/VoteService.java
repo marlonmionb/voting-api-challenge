@@ -1,6 +1,7 @@
 package br.com.marlon.voting_api.service;
 
 import br.com.marlon.voting_api.client.CpfEligibilityClient;
+import br.com.marlon.voting_api.client.VoteEligibility;
 import br.com.marlon.voting_api.dto.request.CastVoteRequest;
 import br.com.marlon.voting_api.entity.Vote;
 import br.com.marlon.voting_api.entity.VotingSession;
@@ -71,14 +72,14 @@ public class VoteService {
             );
         }
 
-//        VoteEligibility eligibility = cpfEligibilityClient
-//                .checkEligibility(associateCpf);
-//
-//        if (eligibility != VoteEligibility.ABLE_TO_VOTE) {
-//            throw new IllegalStateException(
-//                    "Associate is not eligible to vote"
-//            );
-//        }
+        VoteEligibility eligibility = cpfEligibilityClient
+                .checkEligibility(associateCpf);
+
+        if (eligibility != VoteEligibility.ABLE_TO_VOTE) {
+            throw new IllegalStateException(
+                    "Associate is not eligible to vote"
+            );
+        }
 
         Vote vote = new Vote();
         vote.setVotingSession(votingSession);

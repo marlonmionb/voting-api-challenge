@@ -1,5 +1,7 @@
 package br.com.marlon.voting_api;
 
+import br.com.marlon.voting_api.client.CpfEligibilityClient;
+import br.com.marlon.voting_api.client.VoteEligibility;
 import br.com.marlon.voting_api.dto.request.CastVoteRequest;
 import br.com.marlon.voting_api.dto.request.CreateAgendaItemRequest;
 import br.com.marlon.voting_api.dto.request.OpenVotingSessionRequest;
@@ -16,10 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
@@ -41,8 +45,14 @@ class VotingFlowIntegrationTest {
     @Autowired
     private EntityManager entityManager;
 
+    @MockitoBean
+    private CpfEligibilityClient cpfEligibilityClient;
+
     @Test
     void shouldPersistVoteForAnOpenVotingSession() {
+        when(cpfEligibilityClient.checkEligibility("62094079007"))
+                .thenReturn(VoteEligibility.ABLE_TO_VOTE);
+
         AgendaItem agendaItem = agendaItemService.create(
                 new CreateAgendaItemRequest(
                         "Approve annual budget",
