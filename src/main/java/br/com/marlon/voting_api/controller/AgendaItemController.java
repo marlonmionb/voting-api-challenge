@@ -1,6 +1,7 @@
 package br.com.marlon.voting_api.controller;
 
 import br.com.marlon.voting_api.dto.request.CreateAgendaItemRequest;
+import br.com.marlon.voting_api.dto.response.AgendaItemResponse;
 import br.com.marlon.voting_api.dto.screen.FormButtonResponse;
 import br.com.marlon.voting_api.dto.screen.FormItemResponse;
 import br.com.marlon.voting_api.dto.screen.FormScreenResponse;
@@ -55,15 +56,23 @@ public class AgendaItemController {
         );
     }
 
+
     @PostMapping("/agenda-items")
-    public ResponseEntity<AgendaItem> createAgendaItem(
+    public ResponseEntity<AgendaItemResponse> createAgendaItem(
             @Valid @RequestBody CreateAgendaItemRequest request
     ) {
         AgendaItem agendaItem = agendaItemService.create(request);
 
+        AgendaItemResponse response = new AgendaItemResponse(
+                agendaItem.getId(),
+                agendaItem.getTitle(),
+                agendaItem.getDescription(),
+                agendaItem.getCreatedAt()
+        );
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(agendaItem);
+                .body(response);
     }
 
 }

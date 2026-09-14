@@ -2,6 +2,7 @@ package br.com.marlon.voting_api.controller;
 
 import br.com.marlon.voting_api.dto.request.OpenVotingSessionRequest;
 import br.com.marlon.voting_api.dto.response.VotingResultResponse;
+import br.com.marlon.voting_api.dto.response.VotingSessionResponse;
 import br.com.marlon.voting_api.entity.VotingSession;
 import br.com.marlon.voting_api.service.VotingSessionService;
 import jakarta.validation.Valid;
@@ -20,14 +21,21 @@ public class VotingSessionController {
     }
 
     @PostMapping("/voting-sessions")
-    public ResponseEntity<VotingSession> open(
+    public ResponseEntity<VotingSessionResponse> open(
             @Valid @RequestBody OpenVotingSessionRequest request
     ) {
         VotingSession votingSession = votingSessionService.open(request);
 
+        VotingSessionResponse response = new VotingSessionResponse(
+                votingSession.getId(),
+                votingSession.getAgendaItem().getId(),
+                votingSession.getOpenedAt(),
+                votingSession.getClosesAt()
+        );
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(votingSession);
+                .body(response);
     }
 
     @GetMapping("/voting-sessions/{votingSessionId}/result")
