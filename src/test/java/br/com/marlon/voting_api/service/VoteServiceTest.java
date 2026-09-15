@@ -6,6 +6,7 @@ import br.com.marlon.voting_api.dto.request.CastVoteRequest;
 import br.com.marlon.voting_api.entity.Vote;
 import br.com.marlon.voting_api.entity.VoteChoice;
 import br.com.marlon.voting_api.entity.VotingSession;
+import br.com.marlon.voting_api.exception.ExternalServiceUnavailableException;
 import br.com.marlon.voting_api.repository.VoteRepository;
 import br.com.marlon.voting_api.repository.VotingSessionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -113,6 +114,31 @@ class VoteServiceTest {
 
         assertThrows(
                 IllegalStateException.class,
+                () -> voteService.cast(request)
+        );
+
+        verify(voteRepository, never()).save(any(Vote.class));
+    }
+
+    @Test
+    void shouldNotSaveVoteWhenCpfEligibilityServiceIsUnavailable() {
+        CastVoteRequest request = createRequest();
+        VotingSession openSession = createOpenSession();
+
+        when(votingSessionRepository.findById(request.votingSessionId()))
+                .thenReturn(Optional.of(openSession));
+        when(voteRepository.existsByVotingSessionIdAndAssociateCpf(
+                openSession.getId(),
+                "62094079007"
+        )).thenReturn(false);
+        when(cpfEligibilityClient.checkEligibility("62094079007"))
+                .thenThrow(new ExternalServiceUnavailableException(
+                        "CPF eligibility service returned an invalid response",
+                        null
+                ));
+
+        assertThrows(
+                ExternalServiceUnavailableException.class,
                 () -> voteService.cast(request)
         );
 

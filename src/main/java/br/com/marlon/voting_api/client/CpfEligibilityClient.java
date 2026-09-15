@@ -27,14 +27,21 @@ public class CpfEligibilityClient {
                     .retrieve()
                     .body(CpfEligibilityResponse.class);
 
-            if (response == null) {
+            if (response == null || response.status() == null) {
                 throw new ExternalServiceUnavailableException(
-                        "CPF eligibility service returned an empty response",
+                        "CPF eligibility service returned an invalid response",
                         null
                 );
             }
 
-            return VoteEligibility.valueOf(response.status());
+            try {
+                return VoteEligibility.valueOf(response.status());
+            } catch (IllegalArgumentException exception) {
+                throw new ExternalServiceUnavailableException(
+                        "CPF eligibility service returned an invalid response",
+                        exception
+                );
+            }
         } catch (RestClientResponseException exception){
             if (exception.getStatusCode().value() == 404) {
                 throw new EntityNotFoundException(
