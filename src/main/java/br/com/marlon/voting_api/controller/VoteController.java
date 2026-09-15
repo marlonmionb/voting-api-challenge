@@ -32,8 +32,9 @@ public class VoteController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Vote recorded"),
             @ApiResponse(responseCode = "400", description = "Invalid request"),
-            @ApiResponse(responseCode = "404", description = "Voting session not found"),
-            @ApiResponse(responseCode = "409", description = "Voting session is closed or associate already voted")
+            @ApiResponse(responseCode = "404", description = "Voting session or CPF not found"),
+            @ApiResponse(responseCode = "409", description = "Voting session is closed, associate already voted, or associate is not eligible"),
+            @ApiResponse(responseCode = "503", description = "CPF eligibility service unavailable")
     })
     public ResponseEntity<CastVoteResponse> cast(
             @Valid @RequestBody CastVoteRequest request

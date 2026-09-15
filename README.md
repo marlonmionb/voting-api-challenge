@@ -166,6 +166,10 @@ https://run.mocky.io/v3/57f23672-c15f-48f8-90d3-d84ce00250b8/users/{cpf}
 
 O serviço pode retornar `ABLE_TO_VOTE`, `UNABLE_TO_VOTE` ou `404` para CPF não encontrado.
 
+### Limitação conhecida
+
+Durante a validação manual, o endpoint Mocky fornecido pelo enunciado apresentou certificado TLS não confiável em redes independentes. A URL original permanece configurada conforme o requisito e a validação de certificado HTTPS não foi desabilitada. Enquanto o serviço estiver indisponível, a API retorna `503 Service Unavailable` ao registrar um voto.
+
 ## Tratamento de erros
 
 A API utiliza `ProblemDetail` para padronizar erros:
@@ -175,6 +179,7 @@ A API utiliza `ProblemDetail` para padronizar erros:
 | `400 Bad Request` | Campos inválidos ou CPF em formato inválido. |
 | `404 Not Found` | Pauta, sessão ou CPF externo não encontrado. |
 | `409 Conflict` | Sessão fechada, voto duplicado, associado não elegível ou pauta já com sessão. |
+| `503 Service Unavailable` | Serviço externo de elegibilidade indisponível. |
 
 ## Testes
 

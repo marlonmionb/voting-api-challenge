@@ -14,6 +14,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ExternalServiceUnavailableException.class)
+    public ProblemDetail handleExternalServiceUnavailable(
+            ExternalServiceUnavailableException exception
+    ) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                exception.getMessage()
+        );
+
+        problem.setTitle("External service unavailable");
+
+        return problem;
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleNotFound(EntityNotFoundException exception) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(

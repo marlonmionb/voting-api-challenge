@@ -3,6 +3,7 @@ package br.com.marlon.voting_api.controller;
 import br.com.marlon.voting_api.entity.Vote;
 import br.com.marlon.voting_api.entity.VoteChoice;
 import br.com.marlon.voting_api.entity.VotingSession;
+import br.com.marlon.voting_api.exception.ExternalServiceUnavailableException;
 import br.com.marlon.voting_api.exception.GlobalExceptionHandler;
 import br.com.marlon.voting_api.service.VoteService;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,5 +119,32 @@ class VoteControllerTest {
                 .andExpect(jsonPath("$.title").value("Conflict"))
                 .andExpect(jsonPath("$.detail")
                         .value("Voting session is not open"));
+    }
+
+    @Test
+    void shouldReturnServiceUnavailableWhenCpfEligibilityServiceFails()
+            throws Exception {
+        when(voteService.cast(any()))
+                .thenThrow(new ExternalServiceUnavailableException(
+                        "CPF eligibility service is unavailable",
+                        null
+                ));
+
+        String requestBody = """
+                {
+                  "votingSessionId": 1,
+                  "associateCpf": "62094079007",
+                  "choice": "YES"
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/votes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.title")
+                        .value("External service unavailable"))
+                .andExpect(jsonPath("$.detail")
+                        .value("CPF eligibility service is unavailable"));
     }
 }

@@ -1,10 +1,12 @@
 package br.com.marlon.voting_api.client;
 
+import br.com.marlon.voting_api.exception.ExternalServiceUnavailableException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Component
 public class CpfEligibilityClient {
@@ -26,8 +28,9 @@ public class CpfEligibilityClient {
                     .body(CpfEligibilityResponse.class);
 
             if (response == null) {
-                throw new IllegalStateException(
-                        "CPF eligibility service returned an empty response"
+                throw new ExternalServiceUnavailableException(
+                        "CPF eligibility service returned an empty response",
+                        null
                 );
             }
 
@@ -39,8 +42,14 @@ public class CpfEligibilityClient {
                 );
             }
 
-            throw new IllegalStateException(
-                    "CPF eligibility service is unavailable"
+            throw new ExternalServiceUnavailableException(
+                    "CPF eligibility service is unavailable",
+                    exception
+            );
+        } catch (ResourceAccessException exception) {
+            throw new ExternalServiceUnavailableException(
+                    "CPF eligibility service is unavailable",
+                    exception
             );
         }
 

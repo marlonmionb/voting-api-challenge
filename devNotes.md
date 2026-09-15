@@ -56,6 +56,10 @@ A anotação `@CPF` valida formato e dígitos verificadores antes de executar o 
 
 `CpfEligibilityClient` encapsula a integração de elegibilidade e mantém detalhes HTTP fora de `VoteService`. O endpoint Mocky definido pelo desafio é configurado externamente em `application.yml`.
 
+## Indisponibilidade de serviço externo
+
+Falhas de conexão, TLS ou respostas inesperadas do serviço de elegibilidade são mapeadas para `503 Service Unavailable`. Regras de negócio continuam usando `409 Conflict`.
+
 ## DTOs para requests e responses
 
 DTOs definem os contratos de entrada e saída da API. Respostas específicas evitam a serialização direta de relações JPA, como no registro de votos e na apuração.
