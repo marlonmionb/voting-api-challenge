@@ -11,6 +11,7 @@ Cada pauta pode ter uma sessão de votação. Um associado, identificado pelo CP
 - Spring Web MVC e Spring Validation
 - Spring Data JPA
 - PostgreSQL
+- RabbitMQ e Spring AMQP
 - Flyway
 - Springdoc OpenAPI / Swagger UI
 - JUnit 5, Mockito, MockMvc e Testcontainers
@@ -21,9 +22,15 @@ Cada pauta pode ter uma sessão de votação. Um associado, identificado pelo CP
 - Docker Engine acessível (Docker Desktop ou Docker no WSL2)
 - IntelliJ IDEA
 
-## Configuração do banco de dados
+## Serviços locais
 
-O arquivo `docker-compose.yml` define o PostgreSQL local com os mesmos valores usados pela aplicação:
+O arquivo `docker-compose.yml` inicia PostgreSQL e RabbitMQ. Para iniciar ambos, execute na raiz do projeto:
+
+```bash
+docker compose up -d
+```
+
+O PostgreSQL utiliza os mesmos valores configurados pela aplicação:
 
 ```yaml
 url: jdbc:postgresql://localhost:5432/voting_api
@@ -31,7 +38,7 @@ username: voting_user
 password: voting_password
 ```
 
-Os dados do banco ficam no volume Docker `postgres_data`. Para encerrar o banco sem remover os dados, execute:
+Os dados ficam preservados nos volumes Docker `postgres_data` e `rabbitmq_data`. Para encerrar os serviços sem remover os dados, execute:
 
 ```bash
 docker compose down
@@ -41,7 +48,7 @@ Essas são as credenciais padrão usadas pela aplicação no ambiente local.
 
 ## Executando a aplicação
 
-Primeiro, inicie o banco de dados:
+Primeiro, inicie os serviços locais:
 
 ```bash
 docker compose up -d
@@ -81,6 +88,14 @@ Com a aplicação em execução, os endereços locais são:
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - Especificação OpenAPI: `http://localhost:8080/v3/api-docs`
+- RabbitMQ Management: `http://localhost:15672`
+
+As credenciais locais do RabbitMQ são:
+
+```text
+Usuário: voting_user
+Senha: voting_password
+```
 
 ## Endpoints
 
@@ -156,6 +171,29 @@ O resultado é disponibilizado somente após o encerramento da sessão. A apura�
 - Mais votos `NO`: `REJECTED`.
 - Mesma quantidade: `TIED`.
 
+## Mensageria do resultado
+
+Quando uma sessão encerra, a aplicação publica o resultado na fila durável `voting-results` do RabbitMQ. Um agendador executa a verificação a cada 10 segundos e processa somente sessões cujo resultado ainda não foi publicado.
+
+A API atua como produtora do evento. O consumo é responsabilidade de outros serviços da plataforma. A mensagem não inclui CPF.
+
+Exemplo de evento publicado:
+
+```json
+{
+  "votingSessionId": 1,
+  "agendaItemId": 1,
+  "agendaItemTitle": "Approve annual budget",
+  "yesVotes": 3,
+  "noVotes": 1,
+  "totalVotes": 4,
+  "result": "APPROVED",
+  "closedAt": "2026-09-14T22:00:00Z"
+}
+```
+
+Para verificar localmente, abra o RabbitMQ Management, acesse a fila `voting-results` e use a opção **Get messages**. Para visualizar sem remover a mensagem da fila, selecione **Nack message requeue true**.
+
 ## Integração de elegibilidade por CPF
 
 O bônus de integração externa usa o endpoint Mocky fornecido no enunciado. A URL-base está configurada em `application.yml` e a chamada final segue o formato:
@@ -183,7 +221,7 @@ A API utiliza `ProblemDetail` para padronizar erros:
 
 ## Testes
 
-Os testes unitários cobrem regras dos services com Mockito. Os controllers são testados com MockMvc. O fluxo principal também possui teste de integração com PostgreSQL real via Testcontainers.
+Os testes unitários cobrem regras dos services e da publicação de resultados com Mockito. Os controllers são testados com MockMvc. O fluxo principal também possui teste de integração com PostgreSQL real via Testcontainers.
 
 Antes de rodar todos os testes, confirme que o Docker Engine está em execução. No IntelliJ:
 
