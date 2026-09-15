@@ -92,6 +92,10 @@ Quando uma sessão encerra, um scheduler publica seu resultado na fila durável 
 
 Eventos de criação de pauta, abertura de sessão, registro de voto e rejeições são registrados com SLF4J. Os logs utilizam IDs internos e não registram CPF.
 
+## Logs SQL
+
+A exibição automática de SQL do Hibernate permanece desativada. Logs de negócio permanecem disponíveis sem incluir consultas de infraestrutura.
+
 ## Versionamento da API
 
 As rotas usam o prefixo `/api/v1`, permitindo a coexistência de versões do contrato da API.

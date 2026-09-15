@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "Agenda items", description = "Agenda item creation and mobile form endpoints.")
+@Tag(name = "Agenda items", description = "Agenda item creation endpoints.")
 public class AgendaItemController {
     private final AgendaItemService agendaItemService;
 
