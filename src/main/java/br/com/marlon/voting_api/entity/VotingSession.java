@@ -26,6 +26,17 @@ public class VotingSession {
     @Column(name = "closes_at", nullable = false)
     private OffsetDateTime closesAt;
 
+    @Column(name = "result_published_at")
+    private OffsetDateTime resultPublishedAt;
+
+    public OffsetDateTime getResultPublishedAt() {
+        return resultPublishedAt;
+    }
+
+    public void setResultPublishedAt(OffsetDateTime resultPublishedAt) {
+        this.resultPublishedAt = resultPublishedAt;
+    }
+
     @PrePersist
     private void setOpenedAtOnCreate() {
         if (openedAt == null) {

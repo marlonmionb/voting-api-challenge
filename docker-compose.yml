@@ -1,4 +1,20 @@
 services:
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: voting-api-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: voting_user
+      RABBITMQ_DEFAULT_PASS: voting_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   postgres:
     image: postgres:16-alpine
     container_name: voting-api-postgres
@@ -18,3 +34,4 @@ services:
 
 volumes:
   postgres_data:
+  rabbitmq_data:

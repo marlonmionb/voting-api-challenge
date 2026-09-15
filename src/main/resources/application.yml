@@ -8,6 +8,18 @@ spring:
     password: voting_password
     driver-class-name: org.postgresql.Driver
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: voting_user
+    password: voting_password
+    template:
+      retry:
+        enabled: true
+        initial-interval: 1s
+        max-retries: 2
+        multiplier: 2
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -19,3 +31,9 @@ spring:
 external:
   cpf-eligibility:
     base-url: https://run.mocky.io/v3/57f23672-c15f-48f8-90d3-d84ce00250b8/
+
+app:
+  messaging:
+    voting-result:
+      queue: voting-results
+      fixed-delay: 10s

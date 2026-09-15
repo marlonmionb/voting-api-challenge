@@ -20,9 +20,9 @@ Os identificadores usam `Long` com geração pelo banco. IDs não são controles
 
 O esquema do banco é versionado com Flyway. Alterações de estrutura são introduzidas por novas migrations, preservando o histórico já aplicado.
 
-## PostgreSQL local com Docker Compose
+## Serviços locais com Docker Compose
 
-O ambiente local utiliza Docker Compose para iniciar o PostgreSQL com as credenciais da aplicação. O volume nomeado preserva os dados entre reinicializações do container.
+O ambiente local utiliza Docker Compose para iniciar PostgreSQL e RabbitMQ. Volumes nomeados preservam os dados entre reinicializações dos containers.
 
 ## Datas de criação e votação
 
@@ -72,6 +72,14 @@ O resultado é final e só pode ser consultado depois de `closesAt`. Antes disso
 
 O resultado é definido por maioria simples: mais votos `YES` resultam em `APPROVED`, mais votos `NO` resultam em `REJECTED` e empate resulta em `TIED`.
 
+## Publicação do resultado da votação
+
+Quando uma sessão encerra, um scheduler publica seu resultado na fila durável `voting-results` do RabbitMQ. A mensagem é JSON e contém identificadores da sessão e pauta, totais de votos, resultado e horário de encerramento, sem dados de CPF.
+
+## Controle de publicação
+
+`resultPublishedAt` registra a publicação do resultado na sessão. O schheduler consulta apenas sessões encerradas sem esse registro e o preenche após o envio, evitando republicações durante a operação normal.
+
 ## Tratamento de erros
 
 `ProblemDetail` padroniza respostas de erro. Requests inválidos retornam `400` com os campos que falharam na validação, recursos inexistentes retornam `404` e conflitos de regra de negócio ou integridade retornam `409`.
@@ -94,4 +102,4 @@ Os commits seguem mensagens curtas e descritivas, com prefixos como `feat`, `fix
 
 ## Testes automatizados
 
-Regras de negócio dos services são cobertas com testes unitários usando Mockito. Contratos HTTP, validações e respostas de erro dos controllers são cobertos com MockMvc, sem dependência de banco de dados. Testcontainers é utilizado para validar o fluxo principal contra PostgreSQL real, incluindo persistência e migrations.
+Regras de negócio dos services e da publicação de resultados são cobertas com testes unitários usando Mockito. Contratos HTTP, validações e respostas de erro dos controllers são cobertos com MockMvc, sem dependência de banco de dados. Testcontainers é utilizado para validar o fluxo principal contra PostgreSQL real, incluindo persistência e migrations.
